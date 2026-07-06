@@ -1,0 +1,7 @@
+<nav id="session-list" class="flex-1 space-y-1 overflow-y-auto px-2 pb-3"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% for session in sessions %}
+    {% include "partials/session_item.html" %}
+  {% else %}
+  <p id="session-list-empty" class="px-3 py-4 text-xs text-neutral-400">No hay sesiones. Crea una nueva.</p>
+  {% endfor %}
+</nav>

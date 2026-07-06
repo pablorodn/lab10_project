@@ -1,0 +1,14 @@
+[
+  {
+    "question": "como crear una nueva sesion",
+    "expected_keywords": ["sesion"]
+  },
+  {
+    "question": "como aprobar una accion hitl",
+    "expected_keywords": ["aprob"]
+  },
+  {
+    "question": "como funciona el cron scheduler",
+    "expected_keywords": ["cron"]
+  }
+]

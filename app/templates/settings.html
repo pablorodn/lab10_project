@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Ajustes — Agente Personal{% endblock %}
+{% block content %}
+<div class="min-h-screen">
+  {% include "partials/topbar.html" %}
+  <main class="mx-auto max-w-2xl px-4 py-8 space-y-8">
+    <section class="space-y-4">
+      <h2 class="text-base font-semibold">
+        <label for="settings-name">Perfil</label>
+      </h2>
+      <input id="settings-name" type="text" name="name" value="{{ profile.name }}" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-base font-semibold">Agente</h2>
+      <div class="space-y-1">
+        <label for="settings-agent-name" class="block text-sm text-neutral-600 dark:text-neutral-400">Nombre del agente</label>
+        <input id="settings-agent-name" type="text" name="agent_name" value="{{ profile.agent_name }}" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+      </div>
+      <div class="space-y-1">
+        <label for="settings-system-prompt" class="block text-sm text-neutral-600 dark:text-neutral-400">Instrucciones del sistema</label>
+        <textarea id="settings-system-prompt" name="system_prompt" rows="4" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900">{{ profile.agent_system_prompt }}</textarea>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-base font-semibold">Herramientas</h2>
+      <div class="space-y-2">
+        {% for tool in tool_catalog %}
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="enabled_tools" value="{{ tool.id }}" {% if tool.id in enabled_tool_ids %}checked{% endif %} />
+          <span>{{ tool.display_name }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-base font-semibold">
+        <label for="settings-default-model">Modelo</label>
+      </h2>
+      <select id="settings-default-model" name="default_model" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900">
+        {% for model in curated_models %}
+        <option value="{{ model }}" {% if model == selected_model %}selected{% endif %}>{{ model }}</option>
+        {% endfor %}
+      </select>
+    </section>
+    <div class="flex items-center gap-3">
+      <button hx-post="/settings" hx-include="[name='name'], [name='agent_name'], [name='system_prompt'], [name='enabled_tools'], [name='default_model']" hx-target="#save-status" hx-swap="innerHTML" hx-disabled-elt="this" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+        Guardar cambios
+      </button>
+      <span id="save-status" class="text-sm text-green-600"></span>
+    </div>
+  </main>
+</div>
+{% endblock %}

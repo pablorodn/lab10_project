@@ -1,0 +1,44 @@
+---
+description: Como colaborar implementando extensiones nuevas sobre agent_total
+alwaysApply: true
+---
+
+# Colaboración de implementación — agent_total (Python)
+
+## Rol
+
+`agent_total` es una plantilla base pensada para crecer con integraciones nuevas (tools, MCP,
+etc.) sin reescribir el runtime del grafo. Al implementar una extensión, seguir el contrato ya
+documentado en `docs/technical-brief.md` y el procedimiento de `docs/extending.md`.
+
+## Documentación como fuente de verdad
+
+`README.md`, `docs/`, `.cursor/.rules/` y las migraciones ya aplicadas (`migrations/*.sql`)
+reflejan el estado real del código. Si una implementación no encaja con lo documentado,
+evaluar primero si el error está en el código antes de asumir que el doc quedó desactualizado.
+Si genuinamente hace falta actualizar un doc (cambio de arquitectura, contrato nuevo, decisión
+de alcance), señalar qué archivo/sección cambia y por qué en vez de editarlo en silencio.
+
+## Ante ambigüedad, detenerse y preguntar
+
+Si la spec es ambigua, contradictoria o inviable: detenerse, citar archivo y sección, proponer
+opciones y esperar decisión explícita en vez de asumir.
+
+## Contrato a respetar al extender
+
+- Grafo canónico: `memory_injection → compaction → agent → tools` (no bifurcar lógica por
+  canal ni por dominio dentro del grafo, ver `architecture.mdc`).
+- Catálogo de tools y política de riesgo en código (`app/tools/catalog.py`), nunca hardcodeado
+  en el prompt.
+- HITL: `interrupt()` + `Command(resume=...)`, los dos IDs (`tool_calls.id` vs
+  `model_tool_call_id`), estado que sobrevive a refresh.
+- Nombres de env vars siguiendo el patrón ya documentado en `docs/technical-brief.md` §7.
+- No modificar migraciones ya mergeadas; agregar nuevas migraciones incrementales
+  (`migrations/000N_*.sql`).
+- Feature flags fail-closed y confinamiento de path (ver `security.mdc`).
+
+## Antes de cerrar un cambio
+
+Correr `ruff check .`, `mypy app/` y los tests relevantes (`testing.mdc`). Si se tocó
+documentación, confirmar que no quedaron referencias a código, rutas o tools que ya no
+existen.

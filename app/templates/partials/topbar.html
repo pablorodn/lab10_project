@@ -1,0 +1,26 @@
+<header class="flex h-14 flex-shrink-0 items-center justify-between border-b border-neutral-200 px-4 dark:border-neutral-800">
+  <div class="flex items-center gap-2">
+    <span class="inline-block h-2 w-2 rounded-full bg-blue-600"></span>
+    <span class="text-sm font-semibold">{{ agent_name or "Agente Personal" }}</span>
+  </div>
+  <nav class="flex items-center gap-1">
+    <a
+      href="/chat"
+      class="rounded-md px-3 py-1.5 text-sm font-medium {% if active_nav == 'chat' %}bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300{% else %}text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800{% endif %}"
+    >
+      Chat
+    </a>
+    <a
+      href="/settings"
+      class="rounded-md px-3 py-1.5 text-sm font-medium {% if active_nav == 'settings' %}bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300{% else %}text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800{% endif %}"
+    >
+      Ajustes
+    </a>
+    <button
+      hx-post="/logout"
+      class="rounded-md px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+    >
+      Salir
+    </button>
+  </nav>
+</header>

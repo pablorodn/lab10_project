@@ -1,0 +1,16 @@
+<div id="chat-composer" class="border-t border-neutral-200 px-4 py-3 dark:border-neutral-800"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% if has_pending_confirmation %}
+  <p class="mx-auto mb-2 max-w-2xl text-center text-xs text-amber-600 dark:text-amber-400">
+    Aprueba o cancela la acción pendiente antes de continuar.
+  </p>
+  {% endif %}
+  <p id="attachment-error" class="mx-auto mb-2 hidden max-w-2xl text-center text-xs text-red-600 dark:text-red-400"></p>
+  <div id="attachment-preview" class="mx-auto mb-2 hidden max-w-2xl flex-wrap gap-1"></div>
+  <form id="chat-form" onsubmit="return submitChat(event, this)" enctype="multipart/form-data" class="mx-auto flex max-w-2xl gap-2">
+    <input type="hidden" name="session_id" value="{{ current_session_id }}" />
+    <input type="file" id="chat-attachments" name="attachments" multiple accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleAttachmentSelection(this)" {% if not current_session_id or has_pending_confirmation %}disabled{% endif %} />
+    <button type="button" onclick="document.getElementById('chat-attachments').click()" title="Adjuntar archivo" {% if not current_session_id or has_pending_confirmation %}disabled{% endif %} class="rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800">📎</button>
+    <input id="chat-input" name="message" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" onpaste="handleChatPaste(event)" {% if not current_session_id or has_pending_confirmation %}disabled{% endif %} class="flex-1 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+    <button type="submit" id="send-btn" {% if not current_session_id or has_pending_confirmation %}disabled{% endif %} class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">Enviar</button>
+  </form>
+</div>

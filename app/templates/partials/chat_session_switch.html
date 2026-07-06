@@ -1,0 +1,13 @@
+{% include "partials/messages_list.html" %}
+{% set oob = true %}
+{% include "partials/session_status_bar.html" %}
+{% include "partials/chat_composer.html" %}
+{% if previous_session %}
+{% with session=previous_session %}{% include "partials/session_item.html" %}{% endwith %}
+{% endif %}
+{% if active_session %}
+{% with session=active_session, oob=active_session_oob %}{% include "partials/session_item.html" %}{% endwith %}
+{% endif %}
+{% if clear_empty_state %}
+<p id="session-list-empty" hx-swap-oob="delete"></p>
+{% endif %}

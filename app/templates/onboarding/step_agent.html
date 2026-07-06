@@ -1,0 +1,12 @@
+<div>
+  <h2 class="text-lg font-semibold">Configura tu agente</h2>
+  <p class="text-sm text-neutral-500">Dale un nombre e instrucciones a tu asistente.</p>
+</div>
+<div>
+  <label for="agent_name" class="block text-sm font-medium mb-1">Nombre del agente</label>
+  <input id="agent_name" name="agent_name" type="text" value="{{ data.agent_name }}" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+</div>
+<div>
+  <label for="system_prompt" class="block text-sm font-medium mb-1">Instrucciones del sistema</label>
+  <textarea id="system_prompt" name="system_prompt" rows="5" class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900">{{ data.agent_system_prompt }}</textarea>
+</div>

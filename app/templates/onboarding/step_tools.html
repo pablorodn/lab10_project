@@ -1,0 +1,22 @@
+<div>
+  <h2 class="text-lg font-semibold">Herramientas</h2>
+  <p class="text-sm text-neutral-500">Selecciona las tools que deseas habilitar.</p>
+</div>
+<div class="space-y-2">
+  {% for tool in tool_catalog %}
+  <label class="flex items-start gap-3 rounded-md border border-neutral-200 p-3 text-sm dark:border-neutral-800">
+    <input type="checkbox" name="enabled_tools" value="{{ tool.id }}" {% if tool.id in data.enabled_tools %}checked{% endif %} class="mt-1" />
+    <span class="space-y-1">
+      <span class="flex items-center gap-2">
+        <span>{{ tool.display_name }}</span>
+        {% set risk = tool.risk %}
+        {% include "partials/tool_badge.html" %}
+      </span>
+      <span class="block text-xs text-neutral-500">{{ tool.display_description }}</span>
+      {% if tool.requires_integration %}
+      <span class="block text-xs text-neutral-400">Requiere integración: {{ tool.requires_integration }}</span>
+      {% endif %}
+    </span>
+  </label>
+  {% endfor %}
+</div>

@@ -1,0 +1,34 @@
+---
+description: Estandares de testing para runtime, UI HTMX e integraciones
+alwaysApply: true
+---
+
+# Reglas de Testing
+
+- Todo cambio en runtime (`app/agent`, `app/tools`, `app/routers/chat.py`) requiere pruebas unitarias o de integracion.
+- Probar rutas felices y fallos: auth invalida, integracion ausente, tool deshabilitada, timeout y errores externos.
+- Cubrir flujo HITL completo: pausa por `interrupt`, reanudacion `approve/reject`, persistencia y render de confirmacion.
+- Para HTMX, testear respuesta esperada (partial HTML o `HX-Redirect`) y `hx-target/hx-swap` compatibles.
+- Toda migracion nueva necesita test de compatibilidad hacia adelante y rollback razonable.
+- Antes de cerrar trabajo, correr como minimo: `ruff check`, `mypy app/`, y tests relevantes.
+
+## Matriz minima por feature
+
+- `unit`: validacion de schemas, helpers, riesgo de tools y utilidades de seguridad.
+- `integration`: routers + DB (sesiones, mensajes, tool_calls, onboarding, settings).
+- `e2e`: chat web con tool low-risk y chat con HITL.
+
+## Ejemplo
+
+```python
+def test_high_risk_tool_requires_confirmation():
+    assert tool_requires_confirmation("edit_file") is True
+```
+
+## Matriz mínima por área funcional
+
+- Auth: login, signup, logout y sesión expirada.
+- Chat: creación de sesión, envío de mensaje, historial y limpieza.
+- HITL: pending, approve, reject, failed y reanudación tras refresh.
+- Tools: política de riesgo, feature flags fail-closed, ownership checks.
+- Memoria: extracción, clasificación por tipo (`episodic`/`semantic`/`procedural`), búsqueda vectorial, filtros de privacidad.

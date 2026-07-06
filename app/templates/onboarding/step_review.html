@@ -1,0 +1,13 @@
+<div class="space-y-5">
+  <div>
+    <h2 class="text-lg font-semibold">Revisión</h2>
+    <p class="text-sm text-neutral-500">Confirma tu configuración antes de comenzar.</p>
+  </div>
+  <dl class="space-y-2 text-sm">
+    <div><dt class="font-medium text-neutral-400">Nombre</dt><dd>{{ data.name }}</dd></div>
+    <div><dt class="font-medium text-neutral-400">Zona horaria</dt><dd>{{ data.timezone }}</dd></div>
+    <div><dt class="font-medium text-neutral-400">Idioma</dt><dd>{{ data.language }}</dd></div>
+    <div><dt class="font-medium text-neutral-400">Agente</dt><dd>{{ data.agent_name }}</dd></div>
+    <div><dt class="font-medium text-neutral-400">Herramientas habilitadas</dt><dd>{{ data.enabled_tools | join(", ") if data.enabled_tools else "Ninguna" }}</dd></div>
+  </dl>
+</div>

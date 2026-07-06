@@ -1,0 +1,31 @@
+---
+description: Guardrails de implementacion y operacion para evitar regresiones criticas
+alwaysApply: true
+---
+
+# Guardrails del Proyecto
+
+- No romper contratos de `agent_total`: rutas, nombres de variables de entorno y estados de `tool_calls`.
+- No introducir cambios destructivos de git o base de datos sin instruccion explicita del usuario.
+- No modificar migraciones ya mergeadas/aplicadas; agregar nuevas migraciones incrementales.
+- No agregar nuevas tools sin: schema validado, riesgo declarado, guardas de integracion, tracking y pruebas.
+- No ejecutar acciones sensibles por inferencia de lenguaje natural; usar pipeline HITL y aprobacion explicita.
+- No degradar observabilidad: mantener trazas Langfuse (si esta configurado) y logging estructurado.
+
+## Reglas de calidad de cambios
+
+- Cambios pequenos y coherentes por capa; evitar mezclar UI, DB y runtime sin necesidad.
+- Preservar UX de HTMX: respuestas como partials, mensajes de error claros y estados deshabilitados al procesar.
+- Si una decision de arquitectura cambia el brief, documentar el delta en `docs/technical-brief.md`.
+- Mantener el runtime desacoplado de herramientas de dominio: extender por catálogo + handlers, no por condicionales en el grafo.
+
+## Anti-patrones a evitar
+
+- Saltar `tool catalog` y ejecutar handlers directos desde routers.
+- Codificar secretos en codigo o templates.
+- Convertir respuestas de UI a JSON cuando el flujo existente depende de partial HTML.
+
+## Consistencia documental
+
+- Si una ruta, partial, estado HITL, variable de entorno o migración cambia, actualizar todos los documentos asociados indicados en `README.md`.
+- Evitar copiar SQL completo en documentos narrativos; referenciar `migrations/*.sql` como fuente de verdad.

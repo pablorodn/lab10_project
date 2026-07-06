@@ -1,0 +1,9 @@
+{% if not messages %}
+<div id="messages-empty-state" class="text-center text-sm text-neutral-400 py-20">
+  <p class="text-lg font-medium text-neutral-600 dark:text-neutral-300">Hola, soy {{ agent_name or "Agente" }}</p>
+  <p class="mt-1">Escribe un mensaje para comenzar.</p>
+</div>
+{% endif %}
+{% for msg in messages %}
+  {% include "partials/message.html" %}
+{% endfor %}

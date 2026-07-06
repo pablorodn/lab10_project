@@ -1,0 +1,25 @@
+<form hx-post="/login"
+      hx-target="#form-area"
+      hx-swap="outerHTML"
+      id="form-area"
+      class="space-y-4">
+  {% if error %}
+  <div class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+    {{ error }}
+  </div>
+  {% endif %}
+  <div>
+    <label for="email" class="block text-sm font-medium mb-1">Correo electrónico</label>
+    <input id="email" name="email" type="email" required
+           class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+  </div>
+  <div>
+    <label for="password" class="block text-sm font-medium mb-1">Contraseña</label>
+    <input id="password" name="password" type="password" required
+           class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900" />
+  </div>
+  <button type="submit"
+          class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+    Iniciar sesión
+  </button>
+</form>

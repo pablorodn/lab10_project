@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Agente Personal{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'media' };</script>
+  <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous" defer></script>
+  {% block extra_head %}{% endblock %}
+  <style>
+    :root { --background: #ffffff; --foreground: #171717; }
+    @media (prefers-color-scheme: dark) {
+      :root { --background: #0a0a0a; --foreground: #ededed; }
+    }
+    body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col">
+  {% block content %}{% endblock %}
+</body>
+</html>
