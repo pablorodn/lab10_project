@@ -1,4 +1,5 @@
 from app.routers.chat import (
+    LATENCY_STYLE_SUFFIX,
     PROFILE_CONTEXT_END,
     PROFILE_CONTEXT_START,
     SYSTEM_PROMPT_GUARDRAILS,
@@ -44,3 +45,8 @@ def test_build_user_system_prompt_includes_guardrails_without_profile_context():
 
     assert PROFILE_CONTEXT_START not in result
     assert SYSTEM_PROMPT_GUARDRAILS in result
+
+
+def test_latency_style_suffix_excepciona_search_properties_de_la_brevedad():
+    assert "search_properties" in LATENCY_STYLE_SUFFIX
+    assert "formatted_markdown" in LATENCY_STYLE_SUFFIX

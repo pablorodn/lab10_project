@@ -232,6 +232,35 @@ function guardChatSubmit(form) {
 
 const CODE_FENCE_RE = /```([a-zA-Z0-9_+-]*)\n([\s\S]*?)```/g;
 
+// Solo matchea links markdown `[texto](url)` cuya URL empieza EXACTAMENTE con
+// "https://" (case-insensitive), sin espacios ni parentesis dentro de la URL. Cualquier
+// otro esquema (http://, javascript:, data:, vbscript:, // protocol-relative, etc.) no
+// matchea este regex y por lo tanto NUNCA se convierte a <a> -- queda como texto plano
+// escapado, igual que el resto del mensaje.
+const MARKDOWN_LINK_RE = /\[([^\]]+)\]\((https:\/\/[^\s)]+)\)/gi;
+
+function renderTextWithLinks(text) {
+  let html = "";
+  let lastIndex = 0;
+  let match;
+  MARKDOWN_LINK_RE.lastIndex = 0;
+  while ((match = MARKDOWN_LINK_RE.exec(text)) !== null) {
+    const [full, linkText, url] = match;
+    const before = text.slice(lastIndex, match.index);
+    if (before) html += escapeHtml(before);
+    // Defensa en profundidad: el charset de la URL ya esta acotado por el regex
+    // (sin espacios/parentesis), pero igual se escapa antes de interpolar en el atributo.
+    html +=
+      '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
+      escapeHtml(linkText) +
+      "</a>";
+    lastIndex = match.index + full.length;
+  }
+  const rest = text.slice(lastIndex);
+  if (rest) html += escapeHtml(rest);
+  return html;
+}
+
 function renderAssistantContentHtml(rawText) {
   let html = "";
   let lastIndex = 0;
@@ -240,7 +269,7 @@ function renderAssistantContentHtml(rawText) {
   while ((match = CODE_FENCE_RE.exec(rawText)) !== null) {
     const [full, lang, code] = match;
     const before = rawText.slice(lastIndex, match.index);
-    if (before) html += escapeHtml(before);
+    if (before) html += renderTextWithLinks(before);
     const langClass = lang ? " language-" + escapeHtml(lang) : "";
     html +=
       '<div class="code-block group/code relative my-2">' +
@@ -254,7 +283,7 @@ function renderAssistantContentHtml(rawText) {
     lastIndex = match.index + full.length;
   }
   const rest = rawText.slice(lastIndex);
-  if (rest) html += escapeHtml(rest);
+  if (rest) html += renderTextWithLinks(rest);
   return html;
 }
 

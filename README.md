@@ -70,9 +70,15 @@ cp .env.example .env
 | `EVAL_USER_ID` | UUID de un `profiles.id` existente, usado por `evals/run_faq_experiment.py` |
 | `MCP_EXAMPLE_SERVER_URL` | Config ilustrativa del stub de referencia MCP (opcional) |
 | `ENVIRONMENT` | `development` (default) o `production`; controla `secure`/`https_only` en cookies |
+| `PROPERTIES_SUPABASE_URL` | URL de un proyecto Supabase separado, solo lectura, para búsqueda de propiedades (opcional; ver `migrations/properties_db/`) |
+| `PROPERTIES_SUPABASE_ANON_KEY` | Anon key de ese mismo proyecto de propiedades (opcional; nunca service role) |
+| `PROPERTIES_SUPABASE_SERVICE_ROLE_KEY` | Service role del proyecto de propiedades; solo usada por `scripts/backfill_property_embeddings.py` (proceso offline/manual, nunca por la app en el path de request de un usuario). Nunca importar desde `app/tools` o `app/agent` |
 
 Sin `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`,
-`OPENROUTER_API_KEY` o `SECRET_KEY` la aplicación no arranca.
+`OPENROUTER_API_KEY` o `SECRET_KEY` la aplicación no arranca. `PROPERTIES_SUPABASE_URL` /
+`PROPERTIES_SUPABASE_ANON_KEY` / `PROPERTIES_SUPABASE_SERVICE_ROLE_KEY` son opcionales: si
+faltan, la app arranca igual y la tool de búsqueda de propiedades queda deshabilitada
+mediante un error controlado.
 
 **Cuidado**: si `.env` apunta a un proyecto Supabase real (no uno de prueba), cualquier
 interacción con la app (login, mensajes de chat, etc.) escribe datos reales ahí.

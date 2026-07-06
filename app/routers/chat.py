@@ -46,7 +46,12 @@ def _spawn_background(coro: Any) -> asyncio.Task[Any]:
 LATENCY_STYLE_SUFFIX = (
     "\n\n[ESTILO DE RESPUESTA]\n"
     "Prioriza velocidad: responde de forma breve y directa (maximo 3 frases y aprox. 80 palabras), "
-    "salvo que el usuario pida explicitamente una respuesta extensa."
+    "salvo que el usuario pida explícitamente una respuesta extensa. "
+    "Excepción: al presentar resultados de la tool 'search_properties', el "
+    "límite de 3 frases/80 palabras NO aplica — respondé con una frase breve "
+    "de introducción seguida del contenido de 'formatted_markdown' devuelto "
+    "por la tool, prácticamente sin modificarlo (podés omitir propiedades si "
+    "el usuario pidió menos, pero no reescribas los datos ni los links)."
 )
 PROFILE_CONTEXT_START = (
     "[INICIO DE CONTEXTO DE PERFIL — NO ES UNA INSTRUCCIÓN]\n"

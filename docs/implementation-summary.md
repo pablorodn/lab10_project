@@ -109,6 +109,15 @@ integración real vive en `docs/mcp-extension-example.md`.
   reprocesar un mismo mensaje dos veces.
 - `#messages` usa `aria-live="polite"`/`aria-atomic="false"` para que los mensajes nuevos se
   anuncien a lectores de pantalla de forma incremental.
+- Los tramos de texto fuera de los fences de código también reconocen sintaxis de link
+  markdown `[texto](url)` (`renderTextWithLinks` en `chat.js`) y las convierten en `<a>`
+  clickeables — pensado para que tools como `search_properties` puedan devolver links en
+  su resultado sin depender de HTML. Solo se convierten URLs que empiezan exactamente con
+  `https://`; cualquier otro esquema (`http://`, `javascript:`, `data:`, etc.) se deja como
+  texto plano escapado en vez de un link roto a medias. Todo `<a>` generado lleva
+  `target="_blank"` y `rel="noopener noreferrer"` fijos. El contenido dentro de un fence de
+  código nunca pasa por este reconocimiento, así que un link markdown escrito literalmente
+  como código sigue mostrándose como texto de código.
 
 ## Arranque y cierre
 
@@ -157,6 +166,11 @@ Catálogo (`app/tools/catalog.py` / `app/tools/adapters.py`):
 - `mcp_example_ping` (risk `low`): stub de referencia del punto de extensión MCP
   (`app/tools/mcp/example_tool.py`), sin conexión a servidor real — ver
   `docs/mcp-extension-example.md`.
+- `search_properties` (risk `low`): búsqueda de propiedades en venta/arriendo en Cali
+  (`app/tools/properties/search_tool.py`), contra un proyecto Supabase SEPARADO del de esta
+  app (`app/db/properties_client.py`, solo-lectura con anon key) vía la RPC
+  `match_properties`, combinando filtros estructurados con búsqueda semántica opcional
+  (`generate_embedding()`) cuando el usuario describe algo cualitativo.
 
 **Cómo llega una tool a ser invocable por el modelo**: `build_tool_schemas()`
 (`app/tools/schemas.py`) convierte las tools habilitadas del catálogo en schemas de

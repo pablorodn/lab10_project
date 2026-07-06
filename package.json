@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "Verificacion puntual de app/static/js/chat.js con DOM real via jsdom. No es un toolchain de build; el proyecto sigue siendo Python/uv.",
   "scripts": {
-    "test:js": "node tests/js/test_submit_chat_formdata.mjs && node tests/js/test_submit_chat_stream_resilience.mjs"
+    "test:js": "node tests/js/test_submit_chat_formdata.mjs && node tests/js/test_submit_chat_stream_resilience.mjs && node tests/js/test_render_assistant_links.mjs"
   },
   "devDependencies": {
     "jsdom": "^24.1.3"

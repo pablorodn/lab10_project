@@ -30,6 +30,17 @@ class Settings(BaseSettings):
 
     mcp_example_server_url: str | None = Field(default=None, alias="MCP_EXAMPLE_SERVER_URL")
 
+    properties_supabase_url: str | None = Field(default=None, alias="PROPERTIES_SUPABASE_URL")
+    properties_supabase_anon_key: str | None = Field(
+        default=None, alias="PROPERTIES_SUPABASE_ANON_KEY"
+    )
+    # Service role del proyecto de propiedades: solo para scripts/backfill_property_embeddings.py
+    # (proceso offline/manual, nunca el path de request de la app). Nunca importar desde
+    # app/tools o app/agent — la tool en vivo usa properties_supabase_anon_key (solo lectura).
+    properties_supabase_service_role_key: str | None = Field(
+        default=None, alias="PROPERTIES_SUPABASE_SERVICE_ROLE_KEY"
+    )
+
     environment: str = Field(default="development", alias="ENVIRONMENT")
 
     @field_validator("secret_key")
@@ -84,6 +95,10 @@ class Settings(BaseSettings):
     def database_host(self) -> str | None:
         parsed = urlparse(self.normalized_database_url)
         return parsed.hostname
+
+    @property
+    def is_properties_db_configured(self) -> bool:
+        return bool(self.properties_supabase_url and self.properties_supabase_anon_key)
 
 
 @lru_cache(maxsize=1)

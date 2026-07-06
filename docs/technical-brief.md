@@ -25,6 +25,8 @@ Stack: FastAPI + LangGraph + Supabase + OpenRouter + Langfuse, UI SSR en Jinja2/
 - Catálogo de herramientas extensible por catálogo + adapter (sin tocar el grafo), con punto
   de extensión MCP.
 - Adjuntos multimodales (imagen) y selector de modelo por usuario.
+- Búsqueda de propiedades en venta/arriendo en Cali (`search_properties`), contra un
+  proyecto Supabase separado del de la app, de solo lectura.
 - Trazabilidad vía Langfuse y evaluaciones automatizadas contra el runtime real.
 
 ## 3) Arquitectura del producto
@@ -133,8 +135,13 @@ para el mecanismo de mitigación de prompt injection.
 | `EVAL_USER_ID` | Usuario de `profiles` contra el cual corre `evals/run_faq_experiment.py` |
 | `MCP_EXAMPLE_SERVER_URL` | Config del stub de referencia MCP (`mcp_example_ping`) |
 | `ENVIRONMENT` | `development` o `production`; controla `secure`/`https_only` en cookies de sesión |
+| `PROPERTIES_SUPABASE_URL` | URL de un proyecto Supabase separado, solo lectura, para búsqueda de propiedades (opcional; ver `migrations/properties_db/`) |
+| `PROPERTIES_SUPABASE_ANON_KEY` | Anon key de ese mismo proyecto de propiedades (opcional; nunca service role) |
+| `PROPERTIES_SUPABASE_SERVICE_ROLE_KEY` | Service role del proyecto de propiedades; solo usada por `scripts/backfill_property_embeddings.py` (proceso offline/manual, nunca por la app en el path de request de un usuario). Nunca importar desde `app/tools` o `app/agent` |
 
 Sin `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`,
 `OPENROUTER_API_KEY` o `SECRET_KEY` la aplicación no arranca. El resto activa funcionalidad
 específica ya implementada (file tools, trazas, evaluaciones, el stub de MCP, cookies
-seguras en producción).
+seguras en producción). `PROPERTIES_SUPABASE_URL` / `PROPERTIES_SUPABASE_ANON_KEY` /
+`PROPERTIES_SUPABASE_SERVICE_ROLE_KEY` son opcionales: si faltan, la app arranca igual y la
+tool de búsqueda de propiedades queda deshabilitada mediante un error controlado.

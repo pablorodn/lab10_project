@@ -31,6 +31,29 @@ TOOL_CATALOG: list[ToolDefinition] = [
     ToolDefinition(id="write_file", name="write_file", description="Create file", risk="high", display_name="Crear archivo", display_description="Crea archivo nuevo"),
     ToolDefinition(id="edit_file", name="edit_file", description="Edit file", risk="high", display_name="Editar archivo", display_description="Reemplaza una ocurrencia"),
     ToolDefinition(id="mcp_example_ping", name="mcp_example_ping", description="Example MCP-sourced tool (stub)", risk="low", display_name="Ejemplo MCP (ping)", display_description="Tool de referencia del punto de extensión MCP; no se conecta a ningún servidor real"),
+    ToolDefinition(
+        id="search_properties",
+        name="search_properties",
+        description=(
+            "Busca propiedades reales en venta o arriendo en Cali, Colombia, contra una "
+            "base de datos de listados (apartamentos y casas). Usala cuando el usuario "
+            "pida buscar, recomendar o comparar propiedades, o pregunte qué hay disponible "
+            "según ciertas condiciones.\n\n"
+            "Llená los campos estructurados (operation_type, property_type, neighborhood, "
+            "comuna, min_bedrooms, min_bathrooms, min_parking, min_price_cop, "
+            "max_price_cop, min_area_m2, stratum) SOLO con lo que el usuario mencionó "
+            "explícitamente — no inventes ni asumas valores que no dijo (ej. no asumas "
+            "un estrato, un mínimo de habitaciones o un rango de precio si no los dio).\n\n"
+            "Usá semantic_query únicamente para lo cualitativo o subjetivo que no encaja "
+            "en un filtro exacto: amenities, estilo, cercanías, ambiente descrito en "
+            "lenguaje natural (ej. 'con balcón, iluminado, cerca de un centro comercial'). "
+            "No repitas ahí datos que ya quedaron en los campos estructurados (ej. si el "
+            "usuario dijo 'en Pance', eso va en neighborhood, no en semantic_query)."
+        ),
+        risk="low",
+        display_name="Búsqueda de propiedades",
+        display_description="Busca propiedades en venta/arriendo en Cali por criterios y lenguaje natural",
+    ),
 ]
 
 

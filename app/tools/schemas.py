@@ -1,6 +1,6 @@
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.tools.catalog import TOOL_CATALOG
 
@@ -30,6 +30,38 @@ class McpExamplePingArgs(BaseModel):
     message: str | None = None
 
 
+class SearchPropertiesArgs(BaseModel):
+    # operation_type/property_type: los únicos dos valores reales hoy en cada columna
+    # (ver migrations/properties_db/). Si el dataset agrega categorías nuevas (ej.
+    # "oficina", "lote") este Literal necesita actualizarse a mano — limitación conocida,
+    # deliberada: preferible fallar explícito/acotado a aceptar cualquier string que
+    # después no matchea nada en match_properties().
+    operation_type: Literal["venta", "arriendo"] | None = None
+    property_type: Literal["apartamento", "casa"] | None = None
+    neighborhood: str | None = Field(
+        default=None,
+        description="Nombre de barrio o zona, en lenguaje natural (match "
+        "parcial, no sensible a mayúsculas) — ej. 'pance', 'el ingenio'.",
+    )
+    comuna: str | None = None
+    min_bedrooms: int | None = None
+    min_bathrooms: int | None = None
+    min_parking: int | None = None
+    min_price_cop: int | None = None
+    max_price_cop: int | None = None
+    min_area_m2: float | None = None
+    stratum: int | None = None
+    semantic_query: str | None = Field(
+        default=None,
+        description="Aspectos cualitativos/subjetivos de la búsqueda que "
+        "NO son un filtro exacto: amenities, estilo, cercanías, "
+        "características descritas en lenguaje natural (ej. 'con balcón, "
+        "iluminado, cerca de un centro comercial'). No repitas acá "
+        "filtros que ya llenaste en los demás campos.",
+    )
+    limit: int = Field(default=8, ge=1, le=15)
+
+
 TOOL_ARGS_SCHEMAS: dict[str, type[BaseModel]] = {
     "get_user_preferences": NoArgs,
     "list_enabled_tools": NoArgs,
@@ -37,6 +69,7 @@ TOOL_ARGS_SCHEMAS: dict[str, type[BaseModel]] = {
     "write_file": WriteFileArgs,
     "edit_file": EditFileArgs,
     "mcp_example_ping": McpExamplePingArgs,
+    "search_properties": SearchPropertiesArgs,
 }
 
 

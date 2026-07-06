@@ -3,6 +3,10 @@ from typing import Any
 
 from app.tools.file_tools import execute_edit_file, execute_read_file, execute_write_file
 from app.tools.mcp.example_tool import MCP_EXAMPLE_TOOL_ID, handle_mcp_example_ping
+from app.tools.properties.search_tool import (
+    SEARCH_PROPERTIES_TOOL_ID,
+    handle_search_properties,
+)
 
 ToolHandler = Callable[[dict[str, Any], dict[str, Any]], Awaitable[dict[str, Any]]]
 
@@ -34,4 +38,5 @@ TOOL_HANDLERS: dict[str, ToolHandler] = {
     "write_file": handle_write_file,
     "edit_file": handle_edit_file,
     MCP_EXAMPLE_TOOL_ID: handle_mcp_example_ping,
+    SEARCH_PROPERTIES_TOOL_ID: handle_search_properties,
 }
