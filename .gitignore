@@ -10,4 +10,5 @@ __pycache__/
 *.egg-info/
 node_modules/
 .DS_Store
+.server.log
 .claude/settings.local.json
