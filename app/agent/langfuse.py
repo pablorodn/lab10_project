@@ -20,7 +20,7 @@ def create_langfuse_callback() -> Any | None:
 
 def build_langfuse_tags(*, is_resume: bool) -> list[str]:
     invocation_tag = "resume" if is_resume else "message"
-    return ["agent_total", "interactive", invocation_tag]
+    return ["lab10_project", "interactive", invocation_tag]
 
 
 def augment_invoke_config(

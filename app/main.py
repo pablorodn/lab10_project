@@ -39,7 +39,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
-app = FastAPI(title="Agente Personal MVP", lifespan=lifespan)
+app = FastAPI(title="Lab10 Project", lifespan=lifespan)
 settings = get_settings()
 app.add_middleware(SessionMiddleware, secret_key=settings.secret_key, https_only=settings.is_production)
 app.add_middleware(AuthMiddleware)

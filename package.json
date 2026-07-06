@@ -1,5 +1,5 @@
 {
-  "name": "agent_total-js-tests",
+  "name": "lab10-project-js-tests",
   "private": true,
   "version": "0.0.0",
   "description": "Verificacion puntual de app/static/js/chat.js con DOM real via jsdom. No es un toolchain de build; el proyecto sigue siendo Python/uv.",

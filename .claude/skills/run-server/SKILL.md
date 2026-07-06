@@ -1,9 +1,9 @@
 ---
 name: run-server
-description: Launch and verify the FastAPI dev server for agent_total (uvicorn), poll for readiness, and know how to stop it. Use whenever asked to run, start, restart, or smoke-test this app locally.
+description: Launch and verify the FastAPI dev server for lab10_project (uvicorn), poll for readiness, and know how to stop it. Use whenever asked to run, start, restart, or smoke-test this app locally.
 ---
 
-# Run the agent_total server
+# Run the lab10_project server
 
 FastAPI + uvicorn app, no `if __name__` entrypoint — always launched via `uvicorn app.main:app`. No Makefile/script wraps this; use the commands below directly.
 

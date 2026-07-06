@@ -1,7 +1,7 @@
 [project]
-name = "agent-personal"
+name = "lab10-project"
 version = "0.1.0"
-description = "Agente Personal MVP con FastAPI + LangGraph + Supabase"
+description = "Lab10 Project - agente conversacional sobre FastAPI + LangGraph + Supabase"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

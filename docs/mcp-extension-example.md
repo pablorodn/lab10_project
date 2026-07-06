@@ -1,6 +1,6 @@
 # Ejemplo de referencia: registrar una tool de servidor MCP
 
-Este documento muestra, con un ejemplo concreto y ejecutable, cómo `agent_total` permite
+Este documento muestra, con un ejemplo concreto y ejecutable, cómo `lab10_project` permite
 registrar una tool nueva -- incluyendo una proveniente de un servidor MCP --
 sin modificar `app/agent/graph.py`. Ver `docs/extending.md` para el checklist general de
 extensión y un ejemplo de diseño más cercano a un caso real (tool MCP contra una base de

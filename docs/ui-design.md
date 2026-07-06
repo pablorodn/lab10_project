@@ -1,6 +1,6 @@
-# UI Design - agent_total (Jinja2 + HTMX)
+# UI Design - lab10_project (Jinja2 + HTMX)
 
-> Contrato visual y de comportamiento de la UI SSR/HTMX de `agent_total`.
+> Contrato visual y de comportamiento de la UI SSR/HTMX de `lab10_project`.
 
 ## 1) Principios de UI
 

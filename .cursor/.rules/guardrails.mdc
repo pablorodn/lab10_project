@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Guardrails del Proyecto
 
-- No romper contratos de `agent_total`: rutas, nombres de variables de entorno y estados de `tool_calls`.
+- No romper contratos de `lab10_project`: rutas, nombres de variables de entorno y estados de `tool_calls`.
 - No introducir cambios destructivos de git o base de datos sin instruccion explicita del usuario.
 - No modificar migraciones ya mergeadas/aplicadas; agregar nuevas migraciones incrementales.
 - No agregar nuevas tools sin: schema validado, riesgo declarado, guardas de integracion, tracking y pruebas.

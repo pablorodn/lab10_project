@@ -119,5 +119,5 @@ async def test_run_faq_eval_reports_langfuse_dataset_run_when_configured(faq_mod
     )
 
     assert final_score == pytest.approx(0.75)
-    assert captured["name"] == "agent_total_faq"
+    assert captured["name"] == "lab10_project_faq"
     assert captured["data"] == faq_module.cases_to_experiment_data(cases)

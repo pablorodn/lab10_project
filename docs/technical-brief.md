@@ -1,12 +1,12 @@
-# Technical Brief - agent_total
+# Technical Brief - lab10_project
 
-> Brief de producto: qué es `agent_total` y qué hace. El detalle de los mecanismos internos
+> Brief de producto: qué es `lab10_project` y qué hace. El detalle de los mecanismos internos
 > vive en `docs/implementation-summary.md`; la guía para agregar herramientas o integraciones
 > nuevas vive en `docs/extending.md`.
 
-## 1) Qué es agent_total
+## 1) Qué es lab10_project
 
-`agent_total` es una plantilla de agente conversacional genérico y extensible: un chat web
+`lab10_project` es una plantilla de agente conversacional genérico y extensible: un chat web
 con memoria de largo plazo, confirmación humana (HITL) para acciones riesgosas, y un punto de
 extensión de herramientas que permite agregar integraciones nuevas — incluyendo servidores
 MCP — sin reescribir el runtime del grafo.

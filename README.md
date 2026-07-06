@@ -1,4 +1,4 @@
-# agent_total
+# Lab10 Project
 
 Plantilla de agente conversacional genérico y extensible: chat web con memoria de largo
 plazo, confirmación humana (HITL) para acciones riesgosas, y un punto de extensión de
@@ -138,7 +138,7 @@ docs/            documentación de arquitectura y contrato de producto
 
 | Documento | Qué describe |
 | --- | --- |
-| `docs/technical-brief.md` | Brief de producto: qué es `agent_total` y qué hace |
+| `docs/technical-brief.md` | Brief de producto: qué es `lab10_project` y qué hace |
 | `docs/ui-design.md` | Contrato visual y HTMX de la UI |
 | `docs/implementation-summary.md` | Cómo está construido en la práctica (mecanismos internos) |
 | `docs/extending.md` | Guía para agregar herramientas o integraciones nuevas |

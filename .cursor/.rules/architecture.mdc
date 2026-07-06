@@ -1,5 +1,5 @@
 ---
-description: Arquitectura base de agent_total (FastAPI + LangGraph + HTMX)
+description: Arquitectura base de lab10_project (FastAPI + LangGraph + HTMX)
 alwaysApply: true
 ---
 
@@ -11,7 +11,7 @@ alwaysApply: true
 - Tratar `tool catalog + risk policy` como source of truth; no hardcodear riesgos en prompts o routers.
 - En frontend usar SSR + HTMX (partials HTML). Evitar introducir frameworks SPA o endpoints JSON cuando el flujo sea de UI parcial.
 - Mantener compatibilidad con esquema Supabase actual; `migrations/*.sql` es la fuente de verdad del esquema y cambios de datos van por migraciones incrementales.
-- El alcance actual de `agent_total` prioriza web; el canal `cron` queda fuera de este alcance de implementación, sin prohibir su posible regreso futuro.
+- El alcance actual de `lab10_project` prioriza web; el canal `cron` queda fuera de este alcance de implementación, sin prohibir su posible regreso futuro.
 
 ## Fuentes de verdad
 

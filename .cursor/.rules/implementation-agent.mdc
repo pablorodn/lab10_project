@@ -1,13 +1,13 @@
 ---
-description: Como colaborar implementando extensiones nuevas sobre agent_total
+description: Como colaborar implementando extensiones nuevas sobre lab10_project
 alwaysApply: true
 ---
 
-# Colaboración de implementación — agent_total (Python)
+# Colaboración de implementación — lab10_project (Python)
 
 ## Rol
 
-`agent_total` es una plantilla base pensada para crecer con integraciones nuevas (tools, MCP,
+`lab10_project` es una plantilla base pensada para crecer con integraciones nuevas (tools, MCP,
 etc.) sin reescribir el runtime del grafo. Al implementar una extensión, seguir el contrato ya
 documentado en `docs/technical-brief.md` y el procedimiento de `docs/extending.md`.
 

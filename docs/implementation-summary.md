@@ -1,6 +1,6 @@
-# Resumen de la implementación - agent_total
+# Resumen de la implementación - lab10_project
 
-> Cómo está construido `agent_total`: mecanismos internos, parámetros y decisiones de
+> Cómo está construido `lab10_project`: mecanismos internos, parámetros y decisiones de
 > implementación que satisfacen el brief de producto (`docs/technical-brief.md`). La guía
 > para agregar herramientas o integraciones nuevas vive en `docs/extending.md`.
 
@@ -208,7 +208,7 @@ resetee a 0.
 `augment_invoke_config()` (`app/agent/langfuse.py`) inyecta `create_langfuse_callback()` como
 `callbacks` en el config del `app.ainvoke()` real del grafo, junto con metadata
 (`langfuse_user_id`, `langfuse_session_id`, `langfuse_tags`); se invoca desde `run_agent()`.
-Formato de tags: `["agent_total", "interactive", "resume"|"message"]` (`resume` cuando el
+Formato de tags: `["lab10_project", "interactive", "resume"|"message"]` (`resume` cuando el
 turno viene de `Command(resume=...)` tras HITL).
 
 `evals/run_faq_experiment.py` invoca al agente real vía `run_agent()` +

@@ -1,6 +1,6 @@
-# Guía de extensión de agent_total
+# Guía de extensión de lab10_project
 
-Este documento es el procedimiento para agregar una integración nueva a `agent_total` (una
+Este documento es el procedimiento para agregar una integración nueva a `lab10_project` (una
 tool nueva, una integración MCP, etc.) sobre el mecanismo de catálogo + adapter ya existente.
 Invoca directamente las reglas ya declaradas en `.cursor/.rules/` — no las repite.
 

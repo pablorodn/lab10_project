@@ -17,7 +17,7 @@ from app.db.queries.tools import list_enabled_tool_ids
 
 CASES_PATH = Path(__file__).parent / "faq_cases.json"
 DEFAULT_SYSTEM_PROMPT = (
-    "Eres un asistente útil que responde preguntas sobre el producto agent_total."
+    "Eres un asistente útil que responde preguntas sobre el producto lab10_project."
 )
 
 
@@ -158,7 +158,7 @@ async def _run_with_langfuse(
         )
 
     result = langfuse.run_experiment(
-        name="agent_total_faq",
+        name="lab10_project_faq",
         description="FAQ evaluation against real run_agent() runtime",
         data=experiment_data,
         task=faq_task,

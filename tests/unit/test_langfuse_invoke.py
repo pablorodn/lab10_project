@@ -4,11 +4,11 @@ from app.agent.langfuse import augment_invoke_config, build_langfuse_tags
 
 
 def test_build_langfuse_tags_for_message():
-    assert build_langfuse_tags(is_resume=False) == ["agent_total", "interactive", "message"]
+    assert build_langfuse_tags(is_resume=False) == ["lab10_project", "interactive", "message"]
 
 
 def test_build_langfuse_tags_for_resume():
-    assert build_langfuse_tags(is_resume=True) == ["agent_total", "interactive", "resume"]
+    assert build_langfuse_tags(is_resume=True) == ["lab10_project", "interactive", "resume"]
 
 
 def test_augment_invoke_config_attaches_callback_when_keys_present(monkeypatch):
@@ -28,7 +28,7 @@ def test_augment_invoke_config_attaches_callback_when_keys_present(monkeypatch):
     assert isinstance(config["callbacks"][0], _FakeHandler)
     assert config["metadata"]["langfuse_user_id"] == "user-1"
     assert config["metadata"]["langfuse_session_id"] == "session-1"
-    assert config["metadata"]["langfuse_tags"] == ["agent_total", "interactive", "message"]
+    assert config["metadata"]["langfuse_tags"] == ["lab10_project", "interactive", "message"]
     assert config["configurable"]["thread_id"] == "session-1"
 
 
@@ -42,7 +42,7 @@ def test_augment_invoke_config_uses_resume_tag(monkeypatch):
         is_resume=True,
     )
 
-    assert config["metadata"]["langfuse_tags"] == ["agent_total", "interactive", "resume"]
+    assert config["metadata"]["langfuse_tags"] == ["lab10_project", "interactive", "resume"]
 
 
 def test_augment_invoke_config_stable_without_keys(monkeypatch):
@@ -58,7 +58,7 @@ def test_augment_invoke_config_stable_without_keys(monkeypatch):
     assert "callbacks" not in config
     assert config["metadata"]["langfuse_user_id"] == "user-1"
     assert config["metadata"]["langfuse_session_id"] == "session-1"
-    assert config["metadata"]["langfuse_tags"] == ["agent_total", "interactive", "message"]
+    assert config["metadata"]["langfuse_tags"] == ["lab10_project", "interactive", "message"]
     assert config["configurable"]["tool_ctx"]["db"] is not None
 
 
@@ -104,7 +104,7 @@ async def test_run_agent_passes_langfuse_config_on_message(monkeypatch):
     config = captured["config"]
     assert isinstance(config, dict)
     assert len(config["callbacks"]) == 1  # type: ignore[index]
-    assert config["metadata"]["langfuse_tags"] == ["agent_total", "interactive", "message"]  # type: ignore[index]
+    assert config["metadata"]["langfuse_tags"] == ["lab10_project", "interactive", "message"]  # type: ignore[index]
 
 
 @pytest.mark.anyio
@@ -143,4 +143,4 @@ async def test_run_agent_uses_resume_tag_for_hitl_resume(monkeypatch):
     config = captured["config"]
     assert isinstance(config, dict)
     assert "callbacks" not in config
-    assert config["metadata"]["langfuse_tags"] == ["agent_total", "interactive", "resume"]  # type: ignore[index]
+    assert config["metadata"]["langfuse_tags"] == ["lab10_project", "interactive", "resume"]  # type: ignore[index]
