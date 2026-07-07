@@ -43,7 +43,7 @@ def create_chat_model(
     model = ChatOpenAI(
         model=model_name,
         temperature=0.2,
-        max_tokens=1000,
+        max_tokens=2000,
         timeout=CHAT_TIMEOUT_SECONDS,
         # L2 (tradeoff documentado, sin cambio de comportamiento en esta ronda):
         # max_retries=0 hace que CUALQUIER error transitorio del modelo primario
