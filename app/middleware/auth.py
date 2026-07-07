@@ -8,6 +8,7 @@ from starlette.responses import RedirectResponse, Response
 from app.config import get_settings
 from app.db.client import create_server_client
 from app.dependencies import refresh_user_session, validate_access_token
+from app.middleware.token_cache import cache_token, get_cached_user_id
 
 PUBLIC_PATHS: tuple[str, ...] = ("/login", "/signup", "/static", "/robots.txt", "/favicon.ico")
 SERVER_TO_SERVER_PATHS: tuple[str, ...] = ()
@@ -30,54 +31,66 @@ class AuthMiddleware(BaseHTTPMiddleware):
                     extra={"event": "auth_redirect", "request_id": request_id, "path": path, "reason": "missing_access_token"},
                 )
                 return RedirectResponse(url="/login", status_code=307)
-            try:
-                db = await create_server_client()
-                user = None
-                rotated_access_token: str | None = None
-                rotated_refresh_token: str | None = None
+            rotated_access_token: str | None = None
+            rotated_refresh_token: str | None = None
+
+            # Camino rapido: si este access_token ya se valido hace menos de
+            # TOKEN_CACHE_TTL_SECONDS, reusar ese resultado y saltear por completo
+            # la llamada de red a Supabase Auth (ver app/middleware/token_cache.py).
+            cached_user_id = get_cached_user_id(access_token)
+            if cached_user_id is not None:
+                request.state.user_id = cached_user_id
+            else:
                 try:
-                    user = await validate_access_token(db, access_token)
+                    db = await create_server_client()
+                    user = None
+                    try:
+                        user = await validate_access_token(db, access_token)
+                    except Exception as exc:
+                        logger.info(
+                            "Access token validation failed; trying refresh flow.",
+                            extra={
+                                "event": "auth_access_token_invalid",
+                                "request_id": request_id,
+                                "path": path,
+                                "reason": str(exc),
+                            },
+                        )
+                    if user:
+                        cache_token(access_token, str(user.get("id") or ""))
+                    if not user and refresh_token:
+                        user, rotated_access_token, rotated_refresh_token = await refresh_user_session(
+                            db, refresh_token
+                        )
+                        if user:
+                            logger.info(
+                                "Session token rotated successfully.",
+                                extra={
+                                    "event": "auth_session_refreshed",
+                                    "request_id": request_id,
+                                    "path": path,
+                                },
+                            )
+                            if rotated_access_token:
+                                cache_token(rotated_access_token, str(user.get("id") or ""))
+                    if not user:
+                        logger.info(
+                            "Redirecting request due to invalid session.",
+                            extra={"event": "auth_redirect", "request_id": request_id, "path": path, "reason": "invalid_or_expired_token"},
+                        )
+                        return RedirectResponse(url="/login", status_code=307)
+                    request.state.user_id = str(user.get("id") or "")
                 except Exception as exc:
-                    logger.info(
-                        "Access token validation failed; trying refresh flow.",
+                    logger.warning(
+                        "Redirecting request due to auth provider error.",
                         extra={
-                            "event": "auth_access_token_invalid",
+                            "event": "auth_redirect",
                             "request_id": request_id,
                             "path": path,
                             "reason": str(exc),
                         },
                     )
-                if not user and refresh_token:
-                    user, rotated_access_token, rotated_refresh_token = await refresh_user_session(
-                        db, refresh_token
-                    )
-                    if user:
-                        logger.info(
-                            "Session token rotated successfully.",
-                            extra={
-                                "event": "auth_session_refreshed",
-                                "request_id": request_id,
-                                "path": path,
-                            },
-                        )
-                if not user:
-                    logger.info(
-                        "Redirecting request due to invalid session.",
-                        extra={"event": "auth_redirect", "request_id": request_id, "path": path, "reason": "invalid_or_expired_token"},
-                    )
                     return RedirectResponse(url="/login", status_code=307)
-                request.state.user_id = str(user.get("id") or "")
-            except Exception as exc:
-                logger.warning(
-                    "Redirecting request due to auth provider error.",
-                    extra={
-                        "event": "auth_redirect",
-                        "request_id": request_id,
-                        "path": path,
-                        "reason": str(exc),
-                    },
-                )
-                return RedirectResponse(url="/login", status_code=307)
             response: Response = await call_next(request)
             if rotated_access_token and rotated_refresh_token:
                 secure_cookies = get_settings().is_production

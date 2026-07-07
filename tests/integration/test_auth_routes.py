@@ -6,6 +6,7 @@ from supabase_auth.errors import AuthApiError
 from app.config import get_settings
 from app.dependencies import get_current_user_id, get_db
 from app.main import app
+from app.middleware.token_cache import cache_token, get_cached_user_id
 from app.routers import auth as auth_router
 
 
@@ -443,6 +444,20 @@ def test_logout_redirects_to_login_and_deletes_session_cookies(
     assert "Max-Age=0" in access_token_header
     assert 'sb-refresh-token=""' in refresh_token_header or "sb-refresh-token=;" in refresh_token_header
     assert "Max-Age=0" in refresh_token_header
+
+
+def test_logout_invalidates_cached_access_token(patch_auth_middleware, auth_cookie):
+    # CAMBIO 1: sin esto, un logout no seria efectivo hasta TOKEN_CACHE_TTL_SECONDS
+    # (60s) despues -- AuthMiddleware seguiria autenticando con el token cacheado
+    # aunque la cookie ya se haya borrado en el browser.
+    cache_token(auth_cookie["sb-access-token"], "user-1")
+    assert get_cached_user_id(auth_cookie["sb-access-token"]) == "user-1"
+
+    client = TestClient(app)
+    response = client.post("/logout", cookies=auth_cookie)
+
+    assert response.status_code == 200
+    assert get_cached_user_id(auth_cookie["sb-access-token"]) is None
 
 
 def test_auth_middleware_does_not_mask_downstream_errors_as_login_redirect(

@@ -6,6 +6,7 @@ from supabase_auth.errors import AuthApiError
 
 from app.config import get_settings
 from app.db.client import create_server_client
+from app.middleware.token_cache import invalidate_cached_token
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -103,7 +104,15 @@ async def signup(
 
 
 @router.post("/logout")
-async def logout():
+async def logout(request: Request):
+    # Invalida la entrada cacheada de ESTE access_token para que el logout sea
+    # efectivo de inmediato -- sin esto, un token recien invalidado por logout
+    # seguiria autenticando requests hasta por TOKEN_CACHE_TTL_SECONDS (60s) via
+    # AuthMiddleware, ya que la cookie recien se borra en la respuesta de este
+    # mismo request, no antes.
+    access_token = request.cookies.get("sb-access-token")
+    if access_token:
+        invalidate_cached_token(access_token)
     response = HTMLResponse(status_code=200)
     response.headers["HX-Redirect"] = "/login"
     response.delete_cookie("sb-access-token")

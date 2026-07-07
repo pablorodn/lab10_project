@@ -27,7 +27,31 @@ class JSONFormatter(logging.Formatter):
             "logger": record.name,
             "module": record.module,
         }
-        for key in ("event", "request_id", "route", "status", "latency_ms", "user_id", "session_id", "reason", "path", "database_host"):
+        # Lista auditada contra todos los `extra={...}` de app/ (grep recursivo);
+        # si se agrega un logger.*(..., extra={"nuevo_campo": ...}) en código nuevo,
+        # sumar "nuevo_campo" aca tambien o se va a descartar en silencio (asi se
+        # perdieron db_ms/agent_ms/total_ms de chat_stream_processed hasta ahora).
+        for key in (
+            "event",
+            "request_id",
+            "route",
+            "status",
+            "latency_ms",
+            "user_id",
+            "session_id",
+            "reason",
+            "path",
+            "database_host",
+            "db_ms",
+            "agent_ms",
+            "total_ms",
+            "requested_model",
+            "fallback_model",
+            "primary_model",
+            "model_name",
+            "raw_value",
+            "failure_count",
+        ):
             value = getattr(record, key, None)
             if value is not None:
                 if key in {"user_id", "session_id"}:
