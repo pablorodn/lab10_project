@@ -66,11 +66,12 @@ def create_chat_model(
     return model
 
 
-def create_compaction_model() -> ChatOpenAI:
+def create_compaction_model(max_tokens: int | None = 2000) -> ChatOpenAI:
     settings = get_settings()
     return ChatOpenAI(
         model="google/gemini-2.5-flash",
         temperature=0.1,
+        max_tokens=max_tokens,
         openai_api_key=settings.openrouter_api_key,
         openai_api_base=OPENROUTER_BASE_URL,
         default_headers={"HTTP-Referer": "https://agents.local"},

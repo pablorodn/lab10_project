@@ -34,7 +34,7 @@ async def generate_session_title(db: AsyncClient, session_id: str) -> None:
         seed_message = (first_message.content or "").strip()
         if not seed_message:
             return
-        model = create_compaction_model()
+        model = create_compaction_model(max_tokens=50)
         response = await model.ainvoke(
             [
                 SystemMessage(content=TITLE_SYSTEM_PROMPT),

@@ -50,7 +50,7 @@ async def test_generate_session_title_uses_first_texted_user_message(monkeypatch
         "app.agent.session_title.get_first_user_message_with_content",
         _fake_get_first_user_message_with_content,
     )
-    monkeypatch.setattr("app.agent.session_title.create_compaction_model", lambda: fake_model)
+    monkeypatch.setattr("app.agent.session_title.create_compaction_model", lambda max_tokens=None: fake_model)
     monkeypatch.setattr("app.agent.session_title.update_session_title", _fake_update_session_title)
 
     await generate_session_title(db=object(), session_id="session-1")
@@ -78,7 +78,7 @@ async def test_generate_session_title_truncates_to_six_words(monkeypatch):
         "app.agent.session_title.get_first_user_message_with_content",
         _fake_get_first_user_message_with_content,
     )
-    monkeypatch.setattr("app.agent.session_title.create_compaction_model", lambda: fake_model)
+    monkeypatch.setattr("app.agent.session_title.create_compaction_model", lambda max_tokens=None: fake_model)
     monkeypatch.setattr("app.agent.session_title.update_session_title", _fake_update_session_title)
 
     await generate_session_title(db=object(), session_id="session-1")
