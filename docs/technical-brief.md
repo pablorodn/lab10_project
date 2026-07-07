@@ -25,8 +25,9 @@ Stack: FastAPI + LangGraph + Supabase + OpenRouter + Langfuse, UI SSR en Jinja2/
 - Catálogo de herramientas extensible por catálogo + adapter (sin tocar el grafo), con punto
   de extensión MCP.
 - Adjuntos multimodales (imagen) y selector de modelo por usuario.
-- Búsqueda de propiedades en venta/arriendo en Cali (`search_properties`), contra un
-  proyecto Supabase separado del de la app, de solo lectura.
+- Búsqueda de propiedades en venta/arriendo en Cali (`search_properties` para listados
+  detallados, `list_neighborhoods` para descubrimiento por barrios), contra un proyecto
+  Supabase separado del de la app, de solo lectura.
 - Trazabilidad vía Langfuse y evaluaciones automatizadas contra el runtime real.
 
 ## 3) Arquitectura del producto

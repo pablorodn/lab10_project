@@ -62,6 +62,23 @@ class SearchPropertiesArgs(BaseModel):
     limit: int = Field(default=8, ge=1, le=15)
 
 
+class ListNeighborhoodsArgs(BaseModel):
+    """Descubre barrios con inventario que cumple criterios, sin listar propiedades
+    individuales. Mismo campo de filtros que search_properties, pero agrupa por
+    neighborhood en vez de devolver listados sueltos."""
+
+    operation_type: Literal["venta", "arriendo"] | None = None
+    property_type: Literal["apartamento", "casa"] | None = None
+    min_bedrooms: int | None = None
+    min_bathrooms: int | None = None
+    min_parking: int | None = None
+    min_price_cop: int | None = None
+    max_price_cop: int | None = None
+    min_area_m2: float | None = None
+    stratum: int | None = None
+    limit: int = Field(default=20, ge=1, le=50, description="Máximo 50 barrios")
+
+
 TOOL_ARGS_SCHEMAS: dict[str, type[BaseModel]] = {
     "get_user_preferences": NoArgs,
     "list_enabled_tools": NoArgs,
@@ -70,6 +87,7 @@ TOOL_ARGS_SCHEMAS: dict[str, type[BaseModel]] = {
     "edit_file": EditFileArgs,
     "mcp_example_ping": McpExamplePingArgs,
     "search_properties": SearchPropertiesArgs,
+    "list_neighborhoods": ListNeighborhoodsArgs,
 }
 
 

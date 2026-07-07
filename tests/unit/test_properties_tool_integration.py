@@ -7,6 +7,7 @@ from langchain_core.messages import AIMessage
 from app.agent.graph import tool_executor_auto_node
 from app.tools.adapters import TOOL_HANDLERS
 from app.tools.catalog import get_tool_definition, get_tool_risk
+from app.tools.properties.neighborhoods_tool import LIST_NEIGHBORHOODS_TOOL_ID
 from app.tools.properties.search_tool import SEARCH_PROPERTIES_TOOL_ID
 
 SAMPLE_ROW = {
@@ -112,3 +113,96 @@ async def test_search_properties_executes_via_generic_tool_executor_auto_node(mo
     assert fn_name == "match_properties"
     assert params["p_neighborhood"] == "pance"
     assert params["match_count"] == 5
+
+
+def test_list_neighborhoods_registered_in_catalog_and_adapters():
+    definition = get_tool_definition(LIST_NEIGHBORHOODS_TOOL_ID)
+    assert definition is not None
+    assert definition.id == LIST_NEIGHBORHOODS_TOOL_ID
+    assert get_tool_risk(LIST_NEIGHBORHOODS_TOOL_ID) == "low"
+    assert LIST_NEIGHBORHOODS_TOOL_ID in TOOL_HANDLERS
+
+
+@pytest.mark.anyio
+async def test_list_neighborhoods_executes_via_generic_tool_executor_auto_node(monkeypatch):
+    tracking_calls: list[dict[str, object]] = []
+
+    async def _fake_run_with_tracking(**kwargs):
+        tracking_calls.append(kwargs)
+        return await kwargs["handler"](kwargs["args"])
+
+    monkeypatch.setattr("app.agent.graph.run_with_tracking", _fake_run_with_tracking)
+    monkeypatch.setattr(
+        "app.tools.properties.neighborhoods_tool.get_settings",
+        lambda: SimpleNamespace(is_properties_db_configured=True),
+    )
+
+    sample_neighborhood = {
+        "neighborhood": "El Ingenio",
+        "property_count": 4,
+        "min_price_cop": 1800000,
+    }
+
+    class _FakeRPCBuilder:
+        async def execute(self):
+            return SimpleNamespace(data=[sample_neighborhood])
+
+    class _FakeSupabaseClient:
+        def rpc(self, fn_name, params):
+            self.last_call = (fn_name, params)
+            return _FakeRPCBuilder()
+
+    fake_client = _FakeSupabaseClient()
+
+    async def _fake_create_properties_client():
+        return fake_client
+
+    monkeypatch.setattr(
+        "app.tools.properties.neighborhoods_tool.create_properties_client",
+        _fake_create_properties_client,
+    )
+
+    state = {
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "id": "tc-neighborhoods-1",
+                        "name": LIST_NEIGHBORHOODS_TOOL_ID,
+                        "args": {"operation_type": "arriendo", "limit": 10},
+                    }
+                ],
+            )
+        ],
+        "session_id": "session-1",
+        "tool_iteration_count": 0,
+    }
+    config = {
+        "configurable": {
+            "tool_ctx": {
+                "db": object(),
+                "user_id": "user-1",
+                "session_id": "session-1",
+                "enabled_tools": [LIST_NEIGHBORHOODS_TOOL_ID],
+            }
+        }
+    }
+
+    result = await tool_executor_auto_node(state, config)
+
+    assert len(tracking_calls) == 1
+    assert tracking_calls[0]["tool_id"] == LIST_NEIGHBORHOODS_TOOL_ID
+    assert "tool_iteration_count" not in result
+    assert len(result["messages"]) == 1
+
+    payload = json.loads(result["messages"][0].content)
+    assert payload["count"] == 1
+    assert payload["results"] == [sample_neighborhood]
+    assert "El Ingenio" in payload["formatted_markdown"]
+    assert "4 opciones" in payload["formatted_markdown"]
+
+    fn_name, params = fake_client.last_call
+    assert fn_name == "neighborhoods_by_filters"
+    assert params["p_operation_type"] == "arriendo"
+    assert params["p_limit"] == 10

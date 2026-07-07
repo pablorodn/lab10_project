@@ -183,6 +183,11 @@ Catálogo (`app/tools/catalog.py` / `app/tools/adapters.py`):
   app (`app/db/properties_client.py`, solo-lectura con anon key) vía la RPC
   `match_properties`, combinando filtros estructurados con búsqueda semántica opcional
   (`generate_embedding()`) cuando el usuario describe algo cualitativo.
+- `list_neighborhoods` (risk `low`): descubre barrios con inventario que cumple ciertos
+  filtros, sin listar propiedades individuales — agrupa por `neighborhood` en la misma base
+  de propiedades (`app/tools/properties/neighborhoods_tool.py`) vía la RPC
+  `neighborhoods_by_filters`, devolviendo count y precio mínimo por barrio para orientar
+  exploración del usuario.
 
 **Cómo llega una tool a ser invocable por el modelo**: `build_tool_schemas()`
 (`app/tools/schemas.py`) convierte las tools habilitadas del catálogo en schemas de

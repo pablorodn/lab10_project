@@ -54,6 +54,27 @@ TOOL_CATALOG: list[ToolDefinition] = [
         display_name="Búsqueda de propiedades",
         display_description="Busca propiedades en venta/arriendo en Cali por criterios y lenguaje natural",
     ),
+    ToolDefinition(
+        id="list_neighborhoods",
+        name="list_neighborhoods",
+        description=(
+            "Descubre en qué barrios hay inventario de propiedades que cumple "
+            "ciertos criterios, sin listar propiedades individuales. Usala cuando "
+            "el usuario quiera explorar dónde hay opciones antes de buscar detalles, "
+            "o comparar disponibilidad entre zonas.\n\n"
+            "A diferencia de search_properties (que devuelve listados sueltos con "
+            "detalles completos), esta tool agrupa por neighborhood y devuelve: "
+            "nombre del barrio, cantidad de opciones, y precio mínimo en esa zona. "
+            "Útil para: 'dame barrios con apartamentos en arriendo bajo 3 millones', "
+            "'dónde hay más casas en venta', 'barrios con 2+ habitaciones'.\n\n"
+            "Llená los filtros estructurados (operation_type, property_type, "
+            "min_bedrooms, min_price_cop, max_price_cop, etc.) SOLO con lo que el "
+            "usuario mencionó explícitamente — no inventes ni asumas valores."
+        ),
+        risk="low",
+        display_name="Descubrir barrios por filtros",
+        display_description="Lista barrios con inventario que cumple criterios (sin detalles de propiedades)",
+    ),
 ]
 
 
