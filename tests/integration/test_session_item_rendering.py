@@ -15,31 +15,49 @@ def _render(session, current_session_id=None):
 
 def test_session_item_falls_back_to_date_when_title_is_null():
     session = SimpleNamespace(
-        id="session-1", title=None, last_used_at="2026-07-05T10:00:00+00:00"
+        id="session-1", title=None, created_at="2026-07-05T10:00:00+00:00"
     )
     html = _render(session)
     assert "session-1" in html
     assert "Nueva sesión" not in html
-    # El filtro format_session_date se aplica sobre last_used_at como fallback.
+    # El filtro format_session_date se aplica sobre created_at (fecha de creacion,
+    # estable) como fallback -- no sobre last_used_at (ver test de mas abajo).
     assert "5 jul, 10:00" in html
 
 
+def test_session_item_uses_created_at_not_last_used_at_for_the_fallback_date():
+    # PARTE 3 (decision de producto): la fecha que ve el usuario en el sidebar debe
+    # identificar la conversacion, no reflejar actividad reciente. last_used_at
+    # cambia en cada GET /chat (touch_session) y haria "saltar" la fecha mostrada a
+    # la hora actual en cada visita -- confuso. touch_session/last_used_at siguen
+    # siendo el criterio interno de get_active_session, pero ya no se muestran.
+    session = SimpleNamespace(
+        id="session-1",
+        title=None,
+        created_at="2026-07-01T09:00:00+00:00",
+        last_used_at="2026-07-05T23:59:00+00:00",
+    )
+    html = _render(session)
+    assert "1 jul, 09:00" in html
+    assert "5 jul, 23:59" not in html
+
+
 def test_session_item_falls_back_to_new_session_label_when_no_title_and_no_date():
-    session = SimpleNamespace(id="session-1", title=None, last_used_at=None)
+    session = SimpleNamespace(id="session-1", title=None, created_at=None)
     html = _render(session)
     assert "Nueva sesión" in html
 
 
 def test_session_item_shows_title_when_present():
     session = SimpleNamespace(
-        id="session-1", title="Planear viaje a Japon", last_used_at="2026-07-05T10:00:00+00:00"
+        id="session-1", title="Planear viaje a Japon", created_at="2026-07-05T10:00:00+00:00"
     )
     html = _render(session)
     assert "Planear viaje a Japon" in html
 
 
 def test_session_item_includes_archive_and_delete_actions_with_correct_confirm_behavior():
-    session = SimpleNamespace(id="session-42", title=None, last_used_at=None)
+    session = SimpleNamespace(id="session-42", title=None, created_at=None)
     html = _render(session, current_session_id="session-42")
     assert "/api/sessions/session-42/archive" in html
     assert "/api/sessions/session-42/delete" in html

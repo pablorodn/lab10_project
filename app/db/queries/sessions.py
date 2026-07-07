@@ -1,7 +1,49 @@
+import asyncio
 from datetime import datetime, timezone
 
 from pydantic import BaseModel
 from supabase import AsyncClient
+
+# Lock por usuario para serializar get_or_create_active_session (mas abajo) y
+# cerrar una condicion de carrera real: get_active_session (check) y create_session
+# (insert) no son atomicos entre si, asi que dos GET /chat casi simultaneas del mismo
+# usuario (frecuente en el entorno de red lenta actual, ~500ms de RTT, ante cualquier
+# refresh a mitad de carga) pueden ver ambas "no hay sesion activa" y ambas crear una,
+# duplicando la sesion. NO se puede resolver con un unique constraint en la DB porque
+# tener multiples sesiones activas por usuario es legitimo (boton "+ Nueva sesion",
+# que usa create_session() directo, sin este lock).
+#
+# Limitacion conocida: este es un lock de PROCESO UNICO (dict en memoria de un solo
+# worker uvicorn) -- alcanza para el deploy actual (un unico worker). Si en el futuro
+# se corre con multiples workers/instancias, este dict deja de servir (cada proceso
+# tendria el suyo) y haria falta un advisory lock de Postgres
+# (pg_advisory_xact_lock, hasheando user_id a bigint) para serializar entre procesos.
+# No implementado aca -- queda anotado para cuando aplique.
+_user_session_locks: dict[str, asyncio.Lock] = {}
+USER_SESSION_LOCKS_MAX_ENTRIES = 1000
+
+
+def _get_user_session_lock(user_id: str) -> asyncio.Lock:
+    lock = _user_session_locks.get(user_id)
+    if lock is not None:
+        return lock
+    _evict_unlocked_session_locks_if_over_cap()
+    lock = asyncio.Lock()
+    _user_session_locks[user_id] = lock
+    return lock
+
+
+def _evict_unlocked_session_locks_if_over_cap() -> None:
+    if len(_user_session_locks) < USER_SESSION_LOCKS_MAX_ENTRIES:
+        return
+    # A diferencia de un cache de datos (ej. app/middleware/token_cache.py), ac
+    # NO se puede vaciar el dict entero: un Lock con locked() == True significa que
+    # hay un request en vuelo usandolo AHORA MISMO -- borrarlo le daria a un caller
+    # nuevo un asyncio.Lock() distinto sin que el holder actual se entere, rompiendo
+    # justo la exclusion mutua que este modulo existe para garantizar. Solo se
+    # evictan los locks libres.
+    for uid in [uid for uid, lock in _user_session_locks.items() if not lock.locked()]:
+        del _user_session_locks[uid]
 
 
 class AgentSession(BaseModel):
@@ -63,10 +105,15 @@ async def create_session(db: AsyncClient, user_id: str, channel: str = "web") ->
 async def get_or_create_active_session(
     db: AsyncClient, user_id: str, channel: str
 ) -> AgentSession:
-    current = await get_active_session(db, user_id, channel)
-    if current:
-        return current
-    return await create_session(db, user_id, channel)
+    # Lock ANTES de get_active_session y hasta despues de create_session: dos
+    # llamadas concurrentes del mismo usuario se serializan aca. La segunda espera a
+    # que la primera termine (cree o no una sesion) y su propio get_active_session ya
+    # encuentra la que la primera acaba de crear, en vez de duplicarla.
+    async with _get_user_session_lock(user_id):
+        current = await get_active_session(db, user_id, channel)
+        if current:
+            return current
+        return await create_session(db, user_id, channel)
 
 
 async def touch_session(db: AsyncClient, session_id: str) -> None:

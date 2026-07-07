@@ -8,8 +8,12 @@
     <div class="truncate font-medium text-xs">
       {% if session.title %}
         {{ session.title }}
-      {% elif session.last_used_at %}
-        {{ session.last_used_at | format_session_date }}
+      {% elif session.created_at %}
+        {# created_at (fecha de creacion, estable) en vez de last_used_at: la fecha
+           que ve el usuario debe identificar la conversacion, no su actividad --
+           last_used_at cambia en cada GET /chat (touch_session) y haria "saltar" la
+           fecha mostrada a la hora actual en cada visita, lo cual confunde. #}
+        {{ session.created_at | format_session_date }}
       {% else %}
         Nueva sesión
       {% endif %}

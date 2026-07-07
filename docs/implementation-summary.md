@@ -18,6 +18,12 @@ refresh token inválidos o ausentes), redirige a `/login` (`307`). Cualquier exc
 relacionada con el token (bug real, no sesión inválida) se loguea con el motivo real
 (`reason=str(exc)`) en vez de enmascararse como fallo genérico de sesión.
 
+Antes de validar contra Supabase, `AuthMiddleware` consulta un caché en memoria de proceso
+(`app/middleware/token_cache.py`, key `sha256(access_token)`, TTL de 60s) para evitar la
+llamada de red en requests repetidos del mismo token; `/logout` invalida la entrada de
+inmediato en vez de esperar el TTL. Es un caché de un único proceso (un solo worker
+uvicorn) — con múltiples workers haría falta un mecanismo compartido.
+
 ## Onboarding
 
 Wizard de 4 pasos server-side (`app/pages/onboarding.py`): perfil, agente, herramientas,
@@ -34,7 +40,13 @@ posterior a `/onboarding` con el perfil ya completo redirige a `/chat`.
   `status='active'`); `list_sessions()` trae hasta 10, ordenadas por `created_at desc`, para
   el sidebar; `get_or_create_active_session()` (usada por `GET /chat`) reutiliza la sesión más
   reciente por `last_used_at` o crea una nueva si no queda ninguna activa; `touch_session()`
-  actualiza `last_used_at` en cada `GET /chat`.
+  actualiza `last_used_at` en cada `GET /chat`. `get_or_create_active_session()` serializa por
+  `user_id` (lock en memoria, `app/db/queries/sessions.py`) para cerrar una condición de
+  carrera real: dos `GET /chat` casi simultáneos del mismo usuario podían ver ambos "no hay
+  sesión activa" y crear una sesión duplicada cada uno. El sidebar (`session_item.html`)
+  muestra `created_at` (no `last_used_at`) cuando no hay título, para que la fecha
+  identifique la conversación en vez de saltar a la hora actual en cada visita;
+  `touch_session`/`last_used_at` siguen siendo el criterio interno de sesión vigente.
 - **Envío de mensajes**: la UI real manda cada turno a `POST /api/chat/stream` (SSE); existe
   también `POST /api/chat` sin streaming con el mismo contrato. Ambas rutas comparten la
   misma lógica (validación de request, lookup de sesión + ownership, construcción de
