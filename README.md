@@ -183,8 +183,8 @@ Corresponde al ejemplo (d): búsqueda por zona (norte). El agente cruza los barr
 ## Instalación
 
 ```bash
-git clone https://github.com/pablorodn/agent_personal.git
-cd agent_total
+git clone https://github.com/pablorodn/lab10_project.git
+cd lab10_project
 uv sync --extra dev
 npm install
 ```
