@@ -90,7 +90,7 @@ function run() {
     const actual = renderAssistantContentHtml(text);
     const expected =
       escapeHtml("Mira esto: ") +
-      '<a href="https://example.com/x" target="_blank" rel="noopener noreferrer">Ver publicación</a>' +
+      '<a href="https://example.com/x" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">Ver publicación</a>' +
       escapeHtml(" y avisame.");
     assertEqual(actual, expected, "un link markdown simple se convierte a <a> con target/rel fijos");
   }
@@ -101,12 +101,12 @@ function run() {
     const actual = renderAssistantContentHtml(text);
     assertIncludes(
       actual,
-      '<a href="https://a.com/1" target="_blank" rel="noopener noreferrer">A</a>',
+      '<a href="https://a.com/1" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">A</a>',
       "múltiples links: el primero se convierte a <a>"
     );
     assertIncludes(
       actual,
-      '<a href="https://b.com/2" target="_blank" rel="noopener noreferrer">B</a>',
+      '<a href="https://b.com/2" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">B</a>',
       "múltiples links: el segundo se convierte a <a>"
     );
     assertIncludes(actual, "&amp; luego", "múltiples links: el texto entre ambos queda escapado");
@@ -161,7 +161,7 @@ function run() {
     const actual = renderAssistantContentHtml(text);
     assertIncludes(
       actual,
-      '<a href="https://example.com/y" target="_blank" rel="noopener noreferrer">Ver más</a>',
+      '<a href="https://example.com/y" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">Ver más</a>',
       "el link fuera del fence se convierte a <a> aunque el mensaje también tenga un code fence"
     );
     assertIncludes(actual, "language-python", "el code fence se sigue procesando con su clase de lenguaje");
@@ -180,7 +180,7 @@ function run() {
     const actual = renderAssistantContentHtml(text);
     assertIncludes(
       actual,
-      '<a href="https://example.com/z" target="_blank" rel="noopener noreferrer">A &amp; &lt;B&gt; &quot;C&quot;</a>',
+      '<a href="https://example.com/z" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">A &amp; &lt;B&gt; &quot;C&quot;</a>',
       "el texto del link con caracteres especiales aparece correctamente escapado dentro del <a>"
     );
   }

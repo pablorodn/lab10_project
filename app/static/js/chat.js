@@ -251,7 +251,7 @@ function renderTextWithLinks(text) {
     // Defensa en profundidad: el charset de la URL ya esta acotado por el regex
     // (sin espacios/parentesis), pero igual se escapa antes de interpolar en el atributo.
     html +=
-      '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
+      '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">' +
       escapeHtml(linkText) +
       "</a>";
     lastIndex = match.index + full.length;
